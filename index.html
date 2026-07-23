@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Escape The Granny House</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Thư viện Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Màn hình chính -->
+    <div id="start-screen">
+        <h1>ESCAPE THE HOUSE</h1>
+        <p>Thu thập 3 chìa khóa vàng để mở cửa màu xanh tẩu thoát.</p>
+        <p>PC: Dùng WASD + Chuột. Mobile: Dùng Joystick ảo và vuốt nửa phải màn hình.</p>
+        <button id="btn-start">BẮT ĐẦU CHƠI</button>
+    </div>
+
+    <!-- Màn hình Kết thúc -->
+    <div id="game-over" class="hidden">
+        <h1 id="end-title">BẠN ĐÃ BỊ BẮT!</h1>
+        <button id="btn-restart">CHƠI LẠI</button>
+    </div>
+
+    <!-- UI Trong game -->
+    <div id="ui" class="hidden">
+        <div id="crosshair"></div>
+        <div id="info">🔑 Chìa khóa: 0 / 3</div>
+        <div id="prompt"></div>
+        
+        <!-- Nút Tương tác -->
+        <button id="btn-action">✋ LẤY</button>
+
+        <!-- Vùng cảm ứng mobile -->
+        <div id="joystick-base"><div id="joystick-stick"></div></div>
+        <div id="touch-look-zone"></div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
