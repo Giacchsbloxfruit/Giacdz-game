@@ -5,36 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Escape The Granny House</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Thư viện Three.js -->
+    <!-- Nhúng thư viện Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <!-- Màn hình chính -->
+
+    <!-- Màn hình bắt đầu -->
     <div id="start-screen">
         <h1>ESCAPE THE HOUSE</h1>
-        <p>Thu thập 3 chìa khóa vàng để mở cửa màu xanh tẩu thoát.</p>
-        <p>PC: Dùng WASD + Chuột. Mobile: Dùng Joystick ảo và vuốt nửa phải màn hình.</p>
-        <button id="btn-start">BẮT ĐẦU CHƠI</button>
+        <p>Tìm chìa khóa xanh mở cửa khu vực, thu thập tờ giấy mật mã (3 số), trốn vào tủ khi quái vật đến gần và mở cửa thoát hiểm!</p>
+        <button id="btn-start">CHƠI NGAY</button>
     </div>
 
-    <!-- Màn hình Kết thúc -->
+    <!-- Màn hình kết thúc game -->
     <div id="game-over" class="hidden">
-        <h1 id="end-title">BẠN ĐÃ BỊ BẮT!</h1>
+        <h1 id="end-title">THẮNG RỒI</h1>
+        <p>Nhấn nút bên dưới để chơi lại từ đầu.</p>
         <button id="btn-restart">CHƠI LẠI</button>
     </div>
 
-    <!-- UI Trong game -->
+    <!-- Giao diện trong game (UI) -->
     <div id="ui" class="hidden">
+        <div id="info">🔑 Chìa: 0 | 📜 Mật mã: ???</div>
         <div id="crosshair"></div>
-        <div id="info">🔑 Chìa khóa: 0 / 3</div>
-        <div id="prompt"></div>
+        <div id="prompt">Bấm ✋ / Phím E</div>
         
-        <!-- Nút Tương tác -->
-        <button id="btn-action">✋ LẤY</button>
-
-        <!-- Vùng cảm ứng mobile -->
-        <div id="joystick-base"><div id="joystick-stick"></div></div>
+        <!-- Vùng cảm ứng xoay camera bên phải màn hình -->
         <div id="touch-look-zone"></div>
+
+        <!-- Joystick di chuyển bên trái & Nút tương tác bên phải -->
+        <div id="joystick-base">
+            <div id="joystick-stick"></div>
+        </div>
+        <div id="btn-action">✋<br>LẤY</div>
     </div>
 
     <script src="game.js"></script>
