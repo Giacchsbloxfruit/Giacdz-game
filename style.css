@@ -1,6 +1,16 @@
-* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
-body { overflow: hidden; background: #111; font-family: sans-serif; }
-canvas { display: block; width: 100vw; height: 100vh; }
+* { 
+    margin: 0; padding: 0; box-sizing: border-box; 
+    user-select: none; -webkit-user-select: none; 
+}
+
+html, body { 
+    width: 100%; height: 100%; 
+    overflow: hidden; /* Chặn cuộn trang */
+    touch-action: none; /* QUAN TRỌNG: Khóa hoàn toàn thao tác vuốt màn hình của trình duyệt */
+    background: #111; font-family: sans-serif; 
+}
+
+canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 
 .hidden { display: none !important; }
 
