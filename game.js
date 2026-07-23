@@ -1,3 +1,8 @@
+// CẤP CỨU: Chặn triệt để hành vi trượt/cuộn trang web của điện thoại
+document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+}, { passive: false });
+
 // ==========================================
 // 1. KHỞI TẠO CƠ BẢN & MÔI TRƯỜNG
 // ==========================================
