@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Giac's House [HORROR]</title>
+    <title>Giac's House 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,9 +11,9 @@
     <div id="start-screen" class="screen">
         <h1 class="game-title">Giac's House</h1>
         <div class="menu-container">
-            <button id="btn-play">PLAY</button>
-            <button id="btn-controls">CONTROL</button>
-            <button id="btn-settings">SETTING</button>
+            <button onclick="startGame()">PLAY</button>
+            <button onclick="showMenu('controls-screen')">CONTROL</button>
+            <button onclick="showMenu('settings-screen')">SETTING</button>
         </div>
     </div>
 
@@ -28,14 +28,14 @@
     </div>
 
     <div id="settings-screen" class="screen hidden">
-        <h2>Setting</h2>
+        <h2>CÀI ĐẶT</h2>
         <p>Updating soon...</p>
         <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
     </div>
 
     <div id="game-over" class="screen hidden">
         <h1 id="end-title">THẤT BẠI</h1>
-        <button id="btn-restart">CHƠI LẠI</button>
+        <button onclick="location.reload()">CHƠI LẠI</button>
     </div>
 
     <!-- GIAO DIỆN TRONG GAME -->
@@ -49,7 +49,7 @@
         <div id="joystick-base"><div id="joystick-stick"></div></div>
         <button id="btn-action">✋ LẤY</button>
 
-        <!-- KHO ĐỒ 3 Ô MỚI -->
+        <!-- KHO ĐỒ 3 Ô -->
         <div id="inventory-bar">
             <div class="inv-slot active" id="slot-0" onclick="selectSlot(0)"></div>
             <div class="inv-slot" id="slot-1" onclick="selectSlot(1)"></div>
