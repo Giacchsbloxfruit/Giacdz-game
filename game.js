@@ -39,22 +39,21 @@ function createBrickTexture() {
     const tex = new THREE.CanvasTexture(canvas); tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping; return tex;
 }
 
-// 1: Tường, 0: Trống, 2: Cửa thoát (xích), 3: Cửa Biển, 4: Cửa Xanh Lá, 5: Cửa Vàng, 6: Tủ trốn
 const mapGrid = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,0,1,0,0,0,0,0,1,6,0,1], // (1,1) Cửa thoát hiểm
+    [1,2,0,0,0,1,0,0,0,0,0,1,6,0,1], 
     [1,1,1,1,0,1,0,1,1,1,0,1,1,1,1],
-    [1,0,0,0,0,0,0,0,0,1,0,0,0,5,1], // (13,3) Cửa Vàng
+    [1,0,0,0,0,0,0,0,0,1,0,0,0,5,1], 
     [1,0,1,1,1,1,1,1,0,1,1,1,1,0,1],
-    [1,0,1,6,0,0,0,1,0,0,0,0,1,0,1], // (3,5) Tủ đồ
+    [1,0,1,6,0,0,0,1,0,0,0,0,1,0,1], 
     [1,0,1,1,1,1,0,1,1,1,1,0,1,0,1],
-    [1,0,0,0,0,4,0,0,0,0,1,0,1,0,1], // (5,7) Cửa Xanh Lá
+    [1,0,0,0,0,4,0,0,0,0,1,0,1,0,1], 
     [1,1,1,1,0,1,1,1,1,0,1,0,1,0,1],
-    [1,0,0,0,0,1,6,0,1,0,0,0,0,0,1], // (6,9) Tủ đồ
+    [1,0,0,0,0,1,6,0,1,0,0,0,0,0,1], 
     [1,0,1,1,1,1,0,1,1,1,1,1,1,0,1],
-    [1,0,3,0,0,0,0,0,0,0,0,0,1,0,1], // (2,11) Cửa Xanh Biển
+    [1,0,3,0,0,0,0,0,0,0,0,0,1,0,1], 
     [1,0,1,1,1,1,1,1,1,1,1,0,1,0,1],
-    [1,0,0,6,0,0,0,0,0,0,0,0,0,0,1], // Điểm xuất phát (1,13) - Rất thoáng, gần chìa khóa biển
+    [1,0,0,6,0,0,0,0,0,0,0,0,0,0,1], 
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
@@ -76,30 +75,18 @@ const metalMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.
 
 function createRealisticWoodenDoor(lockHexColor) {
     const group = new THREE.Group();
-    
-    // Khung cửa bao quanh
     const frame = new THREE.Mesh(new THREE.BoxGeometry(UNIT*1.05, UNIT*1.05, UNIT*0.5), frameMat);
     frame.position.y = UNIT/2;
-
-    // Cánh cửa chính bằng gỗ dày
     const doorBody = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.9, UNIT*0.95, UNIT*0.3), woodMat);
     doorBody.position.y = UNIT/2;
 
-    // Các rãnh pan-nen trang trí trên cửa gỗ
     const panelMat = new THREE.MeshStandardMaterial({ color: 0x422817, roughness: 0.7 });
-    const panel1 = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.7, UNIT*0.4, UNIT*0.32), panelMat);
-    panel1.position.set(0, UNIT*0.7, 0);
-    const panel2 = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.7, UNIT*0.4, UNIT*0.32), panelMat);
-    panel2.position.set(0, UNIT*0.3, 0);
+    const panel1 = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.7, UNIT*0.4, UNIT*0.32), panelMat); panel1.position.set(0, UNIT*0.7, 0);
+    const panel2 = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.7, UNIT*0.4, UNIT*0.32), panelMat); panel2.position.set(0, UNIT*0.3, 0);
 
-    // Tay nắm cửa tròn bằng kim loại
-    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), metalMat);
-    knob.position.set(UNIT*0.35, UNIT/2, UNIT*0.18);
-
-    // Ổ khóa và móc xích khóa màu tương ứng
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), metalMat); knob.position.set(UNIT*0.35, UNIT/2, UNIT*0.18);
     const lockMat = new THREE.MeshStandardMaterial({ color: lockHexColor, metalness: 0.5, emissive: lockHexColor, emissiveIntensity: 0.3 });
-    const lockBox = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.15), lockMat);
-    lockBox.position.set(0, UNIT/2, UNIT*0.18);
+    const lockBox = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.15), lockMat); lockBox.position.set(0, UNIT/2, UNIT*0.18);
 
     group.add(frame, doorBody, panel1, panel2, knob, lockBox);
     return group;
@@ -152,7 +139,6 @@ function createKeyItem(hexColor, name, gridX, gridZ) {
     kG.itemName = name; scene.add(kG); items.push(kG);
 }
 
-// Kiềm cắt xích
 const plierGroup = new THREE.Group();
 const mMat = new THREE.MeshStandardMaterial({color: 0x999999, metalness: 0.9});
 const rMat = new THREE.MeshStandardMaterial({color: 0xdd2222});
@@ -161,12 +147,10 @@ const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.6), rMat); p2
 plierGroup.add(p1, p2); plierGroup.position.set(13 * UNIT, 0.5, 3 * UNIT);
 plierGroup.itemName = "pliers"; scene.add(plierGroup); items.push(plierGroup);
 
-// Giấy mật mã
 const paper = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.8), new THREE.MeshStandardMaterial({color: 0xffffee}));
 paper.rotation.x = -Math.PI/2; paper.position.set(13 * UNIT, 0.1, 13 * UNIT);
 paper.itemName = "code"; scene.add(paper); items.push(paper);
 
-// Đặt chìa khóa Biển ngay gần chỗ xuất phát (không bị kẹt khóa)
 createKeyItem(0x0066ff, "blueKey", 2, 11);  
 createKeyItem(0x00ff44, "greenKey", 1, 5);   
 createKeyItem(0xffcc00, "yellowKey", 13, 7); 
@@ -189,12 +173,22 @@ monster.add(legL, legR); scene.add(monster);
 let monDirX = 1; let monDirZ = 0; let monsterState = 'patrol'; 
 
 // ==========================================
-// 6. ĐIỀU KHIỂN (HỖ TRỢ CẢ MÁY TÍNH & ĐIỆN THOẠI)
+// 6. ĐIỀU KHIỂN & KHẮC PHỤC TRIỆT ĐỂ LỖI KẸT PHÍM PC
 // ==========================================
 let inv = { blueKey: false, greenKey: false, yellowKey: false, pliers: false, code: false };
 let isHiding = false; let lastPlayerPos = new THREE.Vector3(); let isPlaying = false;
 let joyX = 0, joyY = 0;
 let keysPressed = { w: false, a: false, s: false, d: false };
+
+function resetKeys() {
+    keysPressed.w = false;
+    keysPressed.a = false;
+    keysPressed.s = false;
+    keysPressed.d = false;
+}
+
+// Tự động ngắt phím nếu chuyển tab hoặc mất focus
+window.addEventListener('blur', () => { resetKeys(); });
 
 function checkCollision(x, z) {
     let gX = Math.round(x / UNIT), gZ = Math.round(z / UNIT);
@@ -213,7 +207,7 @@ function updateHUD() {
     }
 }
 
-// Xử lý bàn phím & chuột máy tính
+// Xử lý sự kiện bàn phím PC
 window.addEventListener('keydown', (e) => {
     if (!isPlaying) return;
     if (e.code === 'KeyW' || e.code === 'ArrowUp') keysPressed.w = true;
@@ -230,9 +224,12 @@ window.addEventListener('keyup', (e) => {
     if (e.code === 'KeyD' || e.code === 'ArrowRight') keysPressed.d = false;
 });
 
+// Xử lý khóa chuột xoay màn hình PC
 renderer.domElement.addEventListener('click', () => {
     if (isPlaying && !/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-        renderer.domElement.requestPointerLock();
+        if (document.pointerLockElement !== renderer.domElement) {
+            renderer.domElement.requestPointerLock();
+        }
     }
 });
 
@@ -332,21 +329,12 @@ const resetJoystick = (e) => {
 joyBase.addEventListener('touchend', resetJoystick, {passive:true});
 joyBase.addEventListener('touchcancel', resetJoystick, {passive:true});
 
-window.addEventListener('touchend', (e) => {
-    let activeIds = Array.from(e.touches).map(t => t.identifier);
-    if(joyTouchId !== null && !activeIds.includes(joyTouchId)) {
-        joyTouchId = null;
-        joyStick.style.transform = `translate(-50%, -50%)`;
-        joyX = 0; joyY = 0;
-    }
-    if(lookTouchId !== null && !activeIds.includes(lookTouchId)) lookTouchId = null;
-}, {passive:true});
-
 // ==========================================
 // 7. TƯƠNG TÁC THÔNG MINH
 // ==========================================
 function tryInteract() {
     if(!isPlaying) return;
+    resetKeys(); // Chống kẹt phím khi mở hộp thoại alert/prompt
 
     if (isHiding) { isHiding = false; camera.position.copy(lastPlayerPos); updateHUD(); return; }
     for(let w of wardrobes) { if (camera.position.distanceTo(w.position) < 5) { isHiding = true; lastPlayerPos.copy(camera.position); camera.position.set(w.position.x, 2, w.position.z); updateHUD(); return; } }
@@ -406,11 +394,9 @@ function animate() {
     if (!isHiding) {
         let moveX = 0, moveZ = 0;
         
-        // Hỗ trợ Joystick di động
         if(joyY !== 0) moveZ = joyY; 
         if(joyX !== 0) moveX = joyX;
         
-        // Hỗ trợ Bàn phím máy tính (WASD)
         if(keysPressed.w) moveZ = -1;
         if(keysPressed.s) moveZ = 1;
         if(keysPressed.a) moveX = -1;
@@ -463,8 +449,9 @@ function startGame() {
     document.getElementById('game-over').classList.add('hidden'); 
     document.getElementById('ui').classList.remove('hidden');
     inv = { blueKey: false, greenKey: false, yellowKey: false, pliers: false, code: false }; 
+    resetKeys();
     updateHUD();
-    camera.position.set(1*UNIT, 2, 13*UNIT); // Đặt vị trí xuất phát an toàn
+    camera.position.set(1*UNIT, 2, 13*UNIT);
     camera.rotation.set(0, 0, 0);
     monster.position.set(7*UNIT, 0, 7*UNIT); 
     exitGlowLight.intensity = 0;
@@ -473,6 +460,7 @@ function startGame() {
 
 function endGame(msg, col) {
     isPlaying = false; 
+    resetKeys();
     if (document.pointerLockElement) document.exitPointerLock();
     document.getElementById('ui').classList.add('hidden'); 
     document.getElementById('game-over').classList.remove('hidden');
