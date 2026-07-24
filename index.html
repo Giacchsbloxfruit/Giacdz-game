@@ -2,38 +2,46 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Escape The Granny House 2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Trò Chơi Thoát Hiểm 3D - Phiên bản Mở Rộng</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <div id="start-screen">
-        <h1>THE ESCAPE 2.0</h1>
-        <p>Thứ tự: Tìm chìa Biển ➔ Chìa Xanh Lá ➔ Chìa Vàng & Kiềm ➔ Mật Mã ➔ Cắt xích & Giải mã cửa thoát hiểm. Trốn vào tủ khi quái vật đến!</p>
-        <button id="btn-start">CHƠI NGAY</button>
+    <!-- Màn hình bắt đầu -->
+    <div id="start-screen" class="screen">
+        <h1>CĂN PHÒNG KINH HOÀNG 3D</h1>
+        <p>
+            <b>Máy tính:</b> Dùng phím <b>W, A, S, D</b> để di chuyển, <b>Chuột</b> để xoay nhìn, phím <b>E</b> để tương tác.<br>
+            <b>Điện thoại:</b> Dùng cần điều khiển bên trái và vuốt màn hình bên phải để di chuyển/nhìn.
+        </p>
+        <button id="btn-start">BẮT ĐẦU CHƠI</button>
     </div>
 
-    <div id="game-over" class="hidden">
-        <h1 id="end-title">THẮNG RỒI</h1>
+    <!-- Màn hình kết thúc game -->
+    <div id="game-over" class="screen hidden">
+        <h1 id="end-title">THẤT BẠI</h1>
         <button id="btn-restart">CHƠI LẠI</button>
     </div>
 
+    <!-- Giao diện trong game (UI) -->
     <div id="ui" class="hidden">
-        <!-- Cập nhật túi đồ hiển thị -->
-        <div id="info">
-            🎒 Túi: <span id="inv-keys">Chưa có gì</span> <br>
-            🛠 Dụng cụ: <span id="inv-tools">Trống</span> <br>
-            📜 Mật mã: <span id="inv-code">???</span>
-        </div>
-        <div id="crosshair"></div>
-        <div id="prompt">Bấm ✋ / Phím E</div>
+        <div id="info">🎒 Khóa: Chưa có <br>🛠 Dụng cụ: Trống <br>📜 Mật mã: ???</div>
+        <div id="prompt">Bấm [E] hoặc [✋ LẤY] để tương tác</div>
         
+        <!-- Vùng cảm ứng xoay camera (Điện thoại) -->
         <div id="touch-look-zone"></div>
-        <div id="joystick-base"><div id="joystick-stick"></div></div>
-        <div id="btn-action">✋<br>LẤY</div>
+        
+        <!-- Cần điều hướng Joystick (Điện thoại) -->
+        <div id="joystick-base">
+            <div id="joystick-stick"></div>
+        </div>
+        
+        <!-- Nút hành động -->
+        <button id="btn-action">✋ LẤY</button>
     </div>
 
+    <!-- Thư viện Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="game.js"></script>
 </body>
 </html>
