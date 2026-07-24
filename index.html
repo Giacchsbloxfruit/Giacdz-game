@@ -3,44 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Trò Chơi Thoát Hiểm 3D - Phiên bản PC/Mobile</title>
+    <title>Giac's House 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Màn hình bắt đầu -->
+    <!-- MENU CHÍNH -->
     <div id="start-screen" class="screen">
-        <h1>CĂN PHÒNG KINH HOÀNG 3D</h1>
-        <p>
-            <b>Máy tính:</b> Click vào màn hình để khóa chuột, dùng phím <b>W, A, S, D</b> để di chuyển, <b>Chuột</b> để xoay nhìn, phím <b>E</b> để tương tác.<br>
-            <b>Điện thoại:</b> Dùng cần điều khiển bên trái và vuốt màn hình bên phải để di chuyển/nhìn.
-        </p>
-        <button id="btn-start">BẮT ĐẦU CHƠI</button>
+        <h1 class="game-title">Giac's House</h1>
+        <div class="menu-container">
+            <button id="btn-play">PLAY</button>
+            <button id="btn-controls">CONTROL</button>
+            <button id="btn-settings">SETTING</button>
+        </div>
     </div>
 
-    <!-- Màn hình kết thúc game -->
+    <!-- MENU ĐIỀU KHIỂN -->
+    <div id="controls-screen" class="screen hidden">
+        <h2>BẢNG ĐIỀU KHIỂN</h2>
+        <p style="text-align: left; max-width: 400px; line-height: 1.8;">
+            <b>PC:</b> Click chuột để khóa góc nhìn. Dùng <b>W, A, S, D</b> để đi lại, chuột để xoay nhìn. Bấm <b>E</b> để tương tác / mở cửa / trốn.<br>
+            <b>Điện thoại:</b> Nửa trái màn hình dùng để di chuyển (Joystick). Nửa phải dùng để vuốt xoay camera. Nút <b>LẤY</b> dùng để tương tác.
+        </p>
+        <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
+    </div>
+
+    <!-- MENU CÀI ĐẶT -->
+    <div id="settings-screen" class="screen hidden">
+        <h2>CÀI ĐẶT</h2>
+        <p>Updating soon...</p>
+        <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
+    </div>
+
+    <!-- MÀN HÌNH GAME OVER -->
     <div id="game-over" class="screen hidden">
         <h1 id="end-title">THẤT BẠI</h1>
         <button id="btn-restart">CHƠI LẠI</button>
     </div>
 
-    <!-- Giao diện trong game (UI) -->
+    <!-- GIAO DIỆN TRONG GAME -->
     <div id="ui" class="hidden">
         <div id="info">🎒 Khóa: Chưa có <br>🛠 Dụng cụ: Trống <br>📜 Mật mã: ???</div>
-        <div id="prompt">Bấm [E] hoặc [✋ LẤY] để tương tác</div>
         
-        <!-- Vùng cảm ứng xoay camera (Điện thoại) -->
+        <!-- Nút tâm màn hình -->
+        <div id="crosshair"></div>
+        
+        <!-- Thông báo mượt mà thay thế alert() -->
+        <div id="toast-msg" class="hidden"></div>
+        
+        <div id="prompt">Bấm [E] hoặc [✋ LẤY]</div>
+        
         <div id="touch-look-zone"></div>
-        
-        <!-- Cần điều hướng Joystick (Điện thoại) -->
-        <div id="joystick-base">
-            <div id="joystick-stick"></div>
-        </div>
-        
-        <!-- Nút hành động -->
+        <div id="joystick-base"><div id="joystick-stick"></div></div>
         <button id="btn-action">✋ LẤY</button>
     </div>
 
-    <!-- Thư viện Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="game.js"></script>
 </body>
