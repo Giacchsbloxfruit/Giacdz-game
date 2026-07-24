@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Giac's House 3D</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- MENU CHÍNH -->
+    <div id="start-screen" class="screen">
+        <h1 class="game-title">Giac's House</h1>
+        <div class="menu-container">
+            <button onclick="startGame()">PLAY</button>
+            <button onclick="showMenu('controls-screen')">CONTROL</button>
+            <button onclick="showMenu('settings-screen')">SETTING</button>
+        </div>
+    </div>
+
+    <div id="controls-screen" class="screen hidden">
+        <h2>BẢNG ĐIỀU KHIỂN</h2>
+        <p style="text-align: left; max-width: 400px; line-height: 1.8;">
+            <b>PC:</b> Phím 1, 2, 3 để đổi ô đồ.<br>
+            <b>Mobile:</b> Chạm vào từng ô đồ dưới đáy để đổi.<br>
+            <b>Túi đồ (Max 3):</b> Khi túi đầy, nhặt đồ mới sẽ vứt đồ đang cầm ở ô hiện tại xuống đất.
+        </p>
+        <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
+    </div>
+
+    <div id="settings-screen" class="screen hidden">
+        <h2>CÀI ĐẶT</h2>
+        <p>Updating soon...</p>
+        <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
+    </div>
+
+    <div id="game-over" class="screen hidden">
+        <h1 id="end-title">THẤT BẠI</h1>
+        <button onclick="location.reload()">CHƠI LẠI</button>
+    </div>
+
+    <!-- GIAO DIỆN TRONG GAME -->
+    <div id="ui" class="hidden">
+        <div id="info" class="hidden"></div>
+        <div id="crosshair"></div>
+        <div id="toast-msg" class="hidden"></div>
+        <div id="prompt">Bấm [E] hoặc [✋ LẤY]</div>
+        
+        <div id="touch-look-zone"></div>
+        <div id="joystick-base"><div id="joystick-stick"></div></div>
+        <button id="btn-action">✋ LẤY</button>
+
+        <!-- KHO ĐỒ 3 Ô -->
+        <div id="inventory-bar">
+            <div class="inv-slot active" id="slot-0" onclick="selectSlot(0)"></div>
+            <div class="inv-slot" id="slot-1" onclick="selectSlot(1)"></div>
+            <div class="inv-slot" id="slot-2" onclick="selectSlot(2)"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
