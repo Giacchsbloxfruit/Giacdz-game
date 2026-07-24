@@ -4,8 +4,8 @@ document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { pa
 // 1. KHỞI TẠO MÔI TRƯỜNG 3D
 // ==========================================
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0c0c0e);
-scene.fog = new THREE.FogExp2(0x0c0c0e, 0.04); 
+scene.background = new THREE.Color(0x0a0a0c);
+scene.fog = new THREE.FogExp2(0x0a0a0c, 0.035); 
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.rotation.order = "YXZ"; 
@@ -14,22 +14,21 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-const ambientLight = new THREE.AmbientLight(0x333344, 1.0); scene.add(ambientLight);
-const flashLight = new THREE.PointLight(0xffeedd, 1.5, 14); camera.add(flashLight);
+const ambientLight = new THREE.AmbientLight(0x222233, 1.2); scene.add(ambientLight);
+const flashLight = new THREE.PointLight(0xfff5e6, 1.8, 16); camera.add(flashLight);
 scene.add(camera);
 
-// Đèn tỏa sáng khi tìm thấy mật mã (Dành cho cửa thoát hiểm)
-const exitGlowLight = new THREE.PointLight(0x00ff55, 0, 20); 
+const exitGlowLight = new THREE.PointLight(0x00ff55, 0, 25); 
 scene.add(exitGlowLight);
 
 // ==========================================
-// 2. TEXTURE & BẢN ĐỒ MỚI (14x14 ZIC ZẮC)
+// 2. TEXTURE & BẢN ĐỒ MÊ CUNG MỚI (15x15)
 // ==========================================
 function createBrickTexture() {
     const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 256;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#1e1b18'; ctx.fillRect(0, 0, 256, 256);
-    ctx.strokeStyle = '#0a0908'; ctx.lineWidth = 5;
+    ctx.fillStyle = '#181614'; ctx.fillRect(0, 0, 256, 256);
+    ctx.strokeStyle = '#080706'; ctx.lineWidth = 6;
     for (let i = 0; i < 4; i++) {
         ctx.beginPath(); ctx.moveTo(0, i * 64); ctx.lineTo(256, i * 64); ctx.stroke();
         for (let j = 0; j < 4; j++) {
@@ -40,53 +39,84 @@ function createBrickTexture() {
     const tex = new THREE.CanvasTexture(canvas); tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping; return tex;
 }
 
-// 1: Tường, 0: Trống, 2: Thoát hiểm, 3: Cửa Biển, 4: Cửa Xanh Lá, 5: Cửa Vàng, 6: Tủ trốn
+// 1: Tường, 0: Trống, 2: Cửa thoát (xích), 3: Cửa Biển, 4: Cửa Xanh Lá, 5: Cửa Vàng, 6: Tủ trốn
 const mapGrid = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,2,0,0,0,1,0,0,0,1,6,0,0,1],
-    [1,1,1,1,0,1,0,5,0,1,1,1,0,1],
-    [1,0,0,0,0,1,0,0,0,0,0,1,0,1],
-    [1,0,1,1,1,1,1,1,1,1,0,1,0,1],
-    [1,0,1,6,0,0,0,0,0,1,0,1,0,1],
-    [1,0,1,1,1,1,0,1,1,1,0,1,0,1],
-    [1,0,0,0,0,4,0,0,0,0,0,1,0,1],
-    [1,1,1,1,1,1,1,1,1,1,0,1,0,1],
-    [1,0,0,0,0,0,0,3,0,0,0,1,0,1],
-    [1,0,1,1,1,1,1,1,1,1,1,1,0,1],
-    [1,0,0,6,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,0,0,0,1,0,0,0,0,0,1,6,0,1], // (1,1) Cửa thoát hiểm
+    [1,1,1,1,0,1,0,1,1,1,0,1,1,1,1],
+    [1,0,0,0,0,0,0,0,0,1,0,0,0,5,1], // (13,3) Cửa Vàng
+    [1,0,1,1,1,1,1,1,0,1,1,1,1,0,1],
+    [1,0,1,6,0,0,0,1,0,0,0,0,1,0,1], // (3,5) Tủ đồ
+    [1,0,1,1,1,1,0,1,1,1,1,0,1,0,1],
+    [1,0,0,0,0,4,0,0,0,0,1,0,1,0,1], // (5,7) Cửa Xanh Lá
+    [1,1,1,1,0,1,1,1,1,0,1,0,1,0,1],
+    [1,0,0,0,0,1,6,0,1,0,0,0,0,0,1], // (6,9) Tủ đồ
+    [1,0,1,1,1,1,0,1,1,1,1,1,1,0,1],
+    [1,0,3,0,0,0,0,0,0,0,0,0,1,0,1], // (2,11) Cửa Xanh Biển
+    [1,0,1,1,1,1,1,1,1,1,1,0,1,0,1],
+    [1,0,0,6,0,0,0,0,0,0,0,0,0,0,1], // Điểm xuất phát (1,13) - Rất thoáng, gần chìa khóa biển
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
 const UNIT = 5;
 const walls = []; const wardrobes = []; let keyDoors = []; let exitDoor;
 const wallMat = new THREE.MeshStandardMaterial({ map: createBrickTexture(), roughness: 0.9 });
-const floorMat = new THREE.MeshStandardMaterial({ color: 0x151312, roughness: 0.9 });
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x121010, roughness: 0.9 });
 const ceilMat = new THREE.MeshStandardMaterial({ color: 0x020202 });
-const woodMat = new THREE.MeshStandardMaterial({ color: 0x4a3222, roughness: 0.7 });
 
-scene.add(new THREE.Mesh(new THREE.PlaneGeometry(70, 70), floorMat).translateY(0).rotateX(-Math.PI/2).translateX(32.5).translateZ(30));
-scene.add(new THREE.Mesh(new THREE.PlaneGeometry(70, 70), ceilMat).translateY(5).rotateX(Math.PI/2).translateX(32.5).translateZ(30));
+scene.add(new THREE.Mesh(new THREE.PlaneGeometry(75, 75), floorMat).translateY(0).rotateX(-Math.PI/2).translateX(35).translateZ(35));
+scene.add(new THREE.Mesh(new THREE.PlaneGeometry(75, 75), ceilMat).translateY(5).rotateX(Math.PI/2).translateX(35).translateZ(35));
 
-function createRealDoor(lockHexColor) {
+// ==========================================
+// 3. THIẾT KẾ CỬA GỖ 3D CHÂN THỰC
+// ==========================================
+const woodMat = new THREE.MeshStandardMaterial({ color: 0x5c3a21, roughness: 0.6 });
+const frameMat = new THREE.MeshStandardMaterial({ color: 0x2b1b11, roughness: 0.8 });
+const metalMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8, roughness: 0.2 });
+
+function createRealisticWoodenDoor(lockHexColor) {
     const group = new THREE.Group();
-    const doorBody = new THREE.Mesh(new THREE.BoxGeometry(UNIT, UNIT, UNIT*0.4), woodMat);
+    
+    // Khung cửa bao quanh
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(UNIT*1.05, UNIT*1.05, UNIT*0.5), frameMat);
+    frame.position.y = UNIT/2;
+
+    // Cánh cửa chính bằng gỗ dày
+    const doorBody = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.9, UNIT*0.95, UNIT*0.3), woodMat);
     doorBody.position.y = UNIT/2;
-    const lockMat = new THREE.MeshStandardMaterial({ color: lockHexColor, metalness: 0.6, emissive: lockHexColor, emissiveIntensity: 0.4 });
-    const lock1 = new THREE.Mesh(new THREE.SphereGeometry(0.25), lockMat); lock1.position.set(UNIT*0.3, UNIT*0.5, UNIT*0.22);
-    const lock2 = new THREE.Mesh(new THREE.SphereGeometry(0.25), lockMat); lock2.position.set(-UNIT*0.3, UNIT*0.5, -UNIT*0.22);
-    group.add(doorBody, lock1, lock2);
+
+    // Các rãnh pan-nen trang trí trên cửa gỗ
+    const panelMat = new THREE.MeshStandardMaterial({ color: 0x422817, roughness: 0.7 });
+    const panel1 = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.7, UNIT*0.4, UNIT*0.32), panelMat);
+    panel1.position.set(0, UNIT*0.7, 0);
+    const panel2 = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.7, UNIT*0.4, UNIT*0.32), panelMat);
+    panel2.position.set(0, UNIT*0.3, 0);
+
+    // Tay nắm cửa tròn bằng kim loại
+    const knob = new THREE.Mesh(new THREE.SphereGeometry(0.18, 16, 16), metalMat);
+    knob.position.set(UNIT*0.35, UNIT/2, UNIT*0.18);
+
+    // Ổ khóa và móc xích khóa màu tương ứng
+    const lockMat = new THREE.MeshStandardMaterial({ color: lockHexColor, metalness: 0.5, emissive: lockHexColor, emissiveIntensity: 0.3 });
+    const lockBox = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.6, 0.15), lockMat);
+    lockBox.position.set(0, UNIT/2, UNIT*0.18);
+
+    group.add(frame, doorBody, panel1, panel2, knob, lockBox);
     return group;
 }
 
 let chains = [];
 function createExitDoor() {
     const group = new THREE.Group();
-    const doorBody = new THREE.Mesh(new THREE.BoxGeometry(UNIT, UNIT, UNIT*0.4), woodMat); doorBody.position.y = UNIT/2;
-    const chainMat = new THREE.MeshStandardMaterial({ color: 0x777777, metalness: 0.9, roughness: 0.2 });
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(UNIT*1.05, UNIT*1.05, UNIT*0.5), frameMat); frame.position.y = UNIT/2;
+    const doorBody = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.9, UNIT*0.95, UNIT*0.3), woodMat); doorBody.position.y = UNIT/2;
+    
+    const chainMat = new THREE.MeshStandardMaterial({ color: 0x888888, metalness: 0.9, roughness: 0.2 });
     const chain1 = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, UNIT*1.2), chainMat); chain1.position.y = UNIT/2; chain1.rotation.z = Math.PI/4;
     const chain2 = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, UNIT*1.2), chainMat); chain2.position.y = UNIT/2; chain2.rotation.z = -Math.PI/4;
     chains.push(chain1, chain2);
-    group.add(doorBody, chain1, chain2);
+    
+    group.add(frame, doorBody, chain1, chain2);
     return group;
 }
 
@@ -100,7 +130,7 @@ for (let z = 0; z < mapGrid.length; z++) {
             exitGlowLight.position.set(pX, UNIT/2, pZ + 2);
         } else if (mapGrid[z][x] >= 3 && mapGrid[z][x] <= 5) {
             let color = mapGrid[z][x]===3 ? 0x0066ff : (mapGrid[z][x]===4 ? 0x00ff44 : 0xffcc00);
-            let d = createRealDoor(color); d.position.set(pX, 0, pZ); d.reqCode = mapGrid[z][x]; d.gridX = x; d.gridZ = z;
+            let d = createRealisticWoodenDoor(color); d.position.set(pX, 0, pZ); d.reqCode = mapGrid[z][x]; d.gridX = x; d.gridZ = z;
             scene.add(d); keyDoors.push(d);
         } else if (mapGrid[z][x] === 6) {
             let ward = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.8, UNIT, UNIT*0.8), woodMat); ward.position.set(pX, UNIT/2, pZ);
@@ -110,7 +140,7 @@ for (let z = 0; z < mapGrid.length; z++) {
 }
 
 // ==========================================
-// 3. VẬT PHẨM (CHÌA, KIỀM, MẬT MÃ)
+// 4. VẬT PHẨM (CHÌA, KIỀM, MẬT MÃ)
 // ==========================================
 const items = [];
 function createKeyItem(hexColor, name, gridX, gridZ) {
@@ -122,32 +152,32 @@ function createKeyItem(hexColor, name, gridX, gridZ) {
     kG.itemName = name; scene.add(kG); items.push(kG);
 }
 
+// Kiềm cắt xích
 const plierGroup = new THREE.Group();
 const mMat = new THREE.MeshStandardMaterial({color: 0x999999, metalness: 0.9});
 const rMat = new THREE.MeshStandardMaterial({color: 0xdd2222});
 const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.6), rMat); p1.position.set(-0.06, -0.2, 0); p1.rotation.z = 0.2;
 const p2 = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.6), rMat); p2.position.set(0.06, -0.2, 0); p2.rotation.z = -0.2;
-const hl1 = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.35), mMat); hl1.position.set(0.06, 0.18, 0); hl1.rotation.z = 0.2;
-const hl2 = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.35), mMat); hl2.position.set(-0.06, 0.18, 0); hl2.rotation.z = -0.2;
-plierGroup.add(p1, p2, hl1, hl2);
-plierGroup.position.set(7 * UNIT, 0.5, 2 * UNIT);
+plierGroup.add(p1, p2); plierGroup.position.set(13 * UNIT, 0.5, 3 * UNIT);
 plierGroup.itemName = "pliers"; scene.add(plierGroup); items.push(plierGroup);
 
+// Giấy mật mã
 const paper = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.8), new THREE.MeshStandardMaterial({color: 0xffffee}));
-paper.rotation.x = -Math.PI/2; paper.position.set(12 * UNIT, 0.1, 2 * UNIT);
+paper.rotation.x = -Math.PI/2; paper.position.set(13 * UNIT, 0.1, 13 * UNIT);
 paper.itemName = "code"; scene.add(paper); items.push(paper);
 
-createKeyItem(0x0066ff, "blueKey", 3, 11);
-createKeyItem(0x00ff44, "greenKey", 1, 3);
-createKeyItem(0xffcc00, "yellowKey", 1, 7);
+// Đặt chìa khóa Biển ngay gần chỗ xuất phát (không bị kẹt khóa)
+createKeyItem(0x0066ff, "blueKey", 2, 11);  
+createKeyItem(0x00ff44, "greenKey", 1, 5);   
+createKeyItem(0xffcc00, "yellowKey", 13, 7); 
 
 const PASSWORD = "583";
 
 // ==========================================
-// 4. QUÁI VẬT AI
+// 5. QUÁI VẬT AI
 // ==========================================
 const monster = new THREE.Group();
-const skinMat = new THREE.MeshStandardMaterial({ color: 0x1a0505, roughness: 1 });
+const skinMat = new THREE.MeshStandardMaterial({ color: 0x150404, roughness: 1 });
 const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 }); 
 monster.add(new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), skinMat).translateY(3.5));
 monster.add(new THREE.Mesh(new THREE.SphereGeometry(0.1), eyeMat).translateY(3.6).translateX(-0.2).translateZ(0.4));
@@ -159,11 +189,12 @@ monster.add(legL, legR); scene.add(monster);
 let monDirX = 1; let monDirZ = 0; let monsterState = 'patrol'; 
 
 // ==========================================
-// 5. ĐIỀU KHIỂN & KHO ĐỒ (ĐÃ KHẮC PHỤC KẸT NÚT)
+// 6. ĐIỀU KHIỂN (HỖ TRỢ CẢ MÁY TÍNH & ĐIỆN THOẠI)
 // ==========================================
 let inv = { blueKey: false, greenKey: false, yellowKey: false, pliers: false, code: false };
 let isHiding = false; let lastPlayerPos = new THREE.Vector3(); let isPlaying = false;
 let joyX = 0, joyY = 0;
+let keysPressed = { w: false, a: false, s: false, d: false };
 
 function checkCollision(x, z) {
     let gX = Math.round(x / UNIT), gZ = Math.round(z / UNIT);
@@ -176,12 +207,45 @@ function updateHUD() {
     if(inv.blueKey) keys.push("🔵 Biển"); if(inv.greenKey) keys.push("🟢 Xanh Lá"); if(inv.yellowKey) keys.push("🟡 Vàng");
     
     if(isHiding) {
-        document.getElementById('info').innerHTML = "👀 ĐANG TRỐN TRONG TỦ<br><span style='color:#ccc'>Bấm LẤY để chui ra</span>";
+        document.getElementById('info').innerHTML = "👀 ĐANG TRỐN TRONG TỦ<br><span style='color:#ccc'>Bấm [E] hoặc [LẤY] để chui ra</span>";
     } else {
         document.getElementById('info').innerHTML = `🎒 Khóa: ${keys.length > 0 ? keys.join(" | ") : "Chưa có"} <br>🛠 Dụng cụ: ${inv.pliers ? "✂️ Kiềm" : "Trống"} <br>📜 Mật mã: ${inv.code ? PASSWORD : "???"}`;
     }
 }
 
+// Xử lý bàn phím & chuột máy tính
+window.addEventListener('keydown', (e) => {
+    if (!isPlaying) return;
+    if (e.code === 'KeyW' || e.code === 'ArrowUp') keysPressed.w = true;
+    if (e.code === 'KeyS' || e.code === 'ArrowDown') keysPressed.s = true;
+    if (e.code === 'KeyA' || e.code === 'ArrowLeft') keysPressed.a = true;
+    if (e.code === 'KeyD' || e.code === 'ArrowRight') keysPressed.d = true;
+    if (e.code === 'KeyE') tryInteract();
+});
+
+window.addEventListener('keyup', (e) => {
+    if (e.code === 'KeyW' || e.code === 'ArrowUp') keysPressed.w = false;
+    if (e.code === 'KeyS' || e.code === 'ArrowDown') keysPressed.s = false;
+    if (e.code === 'KeyA' || e.code === 'ArrowLeft') keysPressed.a = false;
+    if (e.code === 'KeyD' || e.code === 'ArrowRight') keysPressed.d = false;
+});
+
+renderer.domElement.addEventListener('click', () => {
+    if (isPlaying && !/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+        renderer.domElement.requestPointerLock();
+    }
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isPlaying || isHiding) return;
+    if (document.pointerLockElement === renderer.domElement) {
+        camera.rotation.y -= e.movementX * 0.003;
+        camera.rotation.x -= e.movementY * 0.003;
+        camera.rotation.x = Math.max(-Math.PI/2.1, Math.min(Math.PI/2.1, camera.rotation.x));
+    }
+});
+
+// Xử lý cảm ứng điện thoại
 const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 if (isMobile) document.getElementById('joystick-base').style.display = 'block';
 
@@ -268,7 +332,6 @@ const resetJoystick = (e) => {
 joyBase.addEventListener('touchend', resetJoystick, {passive:true});
 joyBase.addEventListener('touchcancel', resetJoystick, {passive:true});
 
-// Chống kẹt nút di chuyển toàn cục
 window.addEventListener('touchend', (e) => {
     let activeIds = Array.from(e.touches).map(t => t.identifier);
     if(joyTouchId !== null && !activeIds.includes(joyTouchId)) {
@@ -276,13 +339,11 @@ window.addEventListener('touchend', (e) => {
         joyStick.style.transform = `translate(-50%, -50%)`;
         joyX = 0; joyY = 0;
     }
-    if(lookTouchId !== null && !activeIds.includes(lookTouchId)) {
-        lookTouchId = null;
-    }
+    if(lookTouchId !== null && !activeIds.includes(lookTouchId)) lookTouchId = null;
 }, {passive:true});
 
 // ==========================================
-// 6. TƯƠNG TÁC THÔNG MINH
+// 7. TƯƠNG TÁC THÔNG MINH
 // ==========================================
 function tryInteract() {
     if(!isPlaying) return;
@@ -298,7 +359,7 @@ function tryInteract() {
             if(name === "yellowKey") { inv.yellowKey = true; alert("Đã nhặt: Chìa khóa Vàng"); }
             if(name === "pliers") { inv.pliers = true; alert("Đã nhặt: Kiềm cắt xích"); }
             if(name === "code") { 
-                inv.code = true; alert(`Bạn đọc mảnh giấy:\n"Mật mã cửa chính là ${PASSWORD}"`); 
+                inv.code = true; alert(`Bạn đọc được mật mã trên giấy:\n"Mật mã cửa chính là ${PASSWORD}"`); 
                 exitGlowLight.intensity = 2.5; 
             }
             scene.remove(items[i]); items.splice(i, 1); updateHUD(); return;
@@ -322,7 +383,7 @@ function tryInteract() {
 
     if (camera.position.distanceTo(exitDoor.position) < 5) {
         if (!inv.pliers) { alert("Cửa bị quấn xích! Bạn cần tìm KIỀM cắt xích trước."); return; }
-        if (!inv.code) { alert("Đã cắt xích xong, nhưng cần thêm Mật Mã để mở cửa thoát!"); return; }
+        if (!inv.code) { alert("Đã cắt xích xong, nhưng cần biết Mật Mã để mở cửa thoát!"); return; }
         
         chains.forEach(c => scene.remove(c)); chains = [];
         
@@ -332,11 +393,10 @@ function tryInteract() {
     }
 }
 document.getElementById('btn-action').addEventListener('touchstart', (e)=>{ e.preventDefault(); tryInteract(); }, {passive:false});
-document.getElementById('btn-action').addEventListener('click', (e)=>{ tryInteract(); });
-document.addEventListener('keydown', (e) => { if(e.code==='KeyE') tryInteract(); });
+document.getElementById('btn-action').addEventListener('click', () => { tryInteract(); });
 
 // ==========================================
-// 7. VÒNG LẶP & AI QUÁI VẬT
+// 8. VÒNG LẶP & AI QUÁI VẬT
 // ==========================================
 const clock = new THREE.Clock();
 function animate() {
@@ -345,8 +405,16 @@ function animate() {
 
     if (!isHiding) {
         let moveX = 0, moveZ = 0;
+        
+        // Hỗ trợ Joystick di động
         if(joyY !== 0) moveZ = joyY; 
         if(joyX !== 0) moveX = joyX;
+        
+        // Hỗ trợ Bàn phím máy tính (WASD)
+        if(keysPressed.w) moveZ = -1;
+        if(keysPressed.s) moveZ = 1;
+        if(keysPressed.a) moveX = -1;
+        if(keysPressed.d) moveX = 1;
         
         if (moveX !== 0 || moveZ !== 0) {
             let velocity = new THREE.Vector3(moveX, 0, moveZ).normalize().multiplyScalar(4.5 * delta);
@@ -359,8 +427,8 @@ function animate() {
     items.forEach(i => { i.rotation.y += delta; i.position.y = 0.5 + Math.sin(time*3)*0.08; });
 
     const distToPlayer = monster.position.distanceTo(camera.position);
-    if (distToPlayer < 10 && !isHiding) monsterState = 'chase'; else monsterState = 'patrol';
-    let monSpeed = (monsterState === 'chase' ? 2.8 : 1.4) * delta;
+    if (distToPlayer < 11 && !isHiding) monsterState = 'chase'; else monsterState = 'patrol';
+    let monSpeed = (monsterState === 'chase' ? 3.0 : 1.5) * delta;
 
     if (monsterState === 'chase') {
         monster.lookAt(camera.position.x, 0, camera.position.z);
@@ -396,15 +464,16 @@ function startGame() {
     document.getElementById('ui').classList.remove('hidden');
     inv = { blueKey: false, greenKey: false, yellowKey: false, pliers: false, code: false }; 
     updateHUD();
-    camera.position.set(1*UNIT, 2, 11*UNIT);
+    camera.position.set(1*UNIT, 2, 13*UNIT); // Đặt vị trí xuất phát an toàn
     camera.rotation.set(0, 0, 0);
-    monster.position.set(6*UNIT, 0, 5*UNIT); 
+    monster.position.set(7*UNIT, 0, 7*UNIT); 
     exitGlowLight.intensity = 0;
     clock.start(); isPlaying = true;
 }
 
 function endGame(msg, col) {
     isPlaying = false; 
+    if (document.pointerLockElement) document.exitPointerLock();
     document.getElementById('ui').classList.add('hidden'); 
     document.getElementById('game-over').classList.remove('hidden');
     const t = document.getElementById('end-title'); t.innerText = msg; t.style.color = col;
