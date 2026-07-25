@@ -44,5 +44,12 @@ button:active { transform: scale(0.95); background: #aa0000; box-shadow: 0 0 10p
 #touch-look-zone { position: absolute; top: 0; right: 0; width: 50%; height: 100%; pointer-events: auto; display: none; }
 #joystick-base { position: absolute; bottom: 40px; left: 40px; width: 130px; height: 130px; background: rgba(255, 255, 255, 0.1); border: 3px solid rgba(255, 255, 255, 0.2); border-radius: 50%; pointer-events: auto; display: none; }
 #joystick-stick { position: absolute; top: 50%; left: 50%; width: 55px; height: 55px; background: rgba(255, 255, 255, 0.7); border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+
+/* Cụm nút Tương tác bên phải */
 #btn-action { position: absolute; bottom: 120px; right: 30px; width: 80px; height: 80px; background: radial-gradient(circle, #cc0000 0%, #660000 100%); border: 3px solid #ff3333; border-radius: 50%; color: white; font-weight: bold; font-size: 16px; pointer-events: auto; display: none; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.2; }
 #btn-action:active { transform: scale(0.9); background: #aa0000; }
+
+/* Nút Đèn Pin Mobile */
+#btn-flashlight { position: absolute; bottom: 130px; right: 125px; width: 60px; height: 60px; background: rgba(30, 30, 30, 0.8); border: 2px solid #777; border-radius: 50%; color: #aaa; font-weight: bold; font-size: 12px; pointer-events: auto; display: none; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.2; transition: 0.2s; }
+#btn-flashlight.on { background: rgba(180, 180, 30, 0.9); border-color: #ffff00; color: #fff; box-shadow: 0 0 15px rgba(255,255,0,0.5); }
+#btn-flashlight:active { transform: scale(0.9); }
