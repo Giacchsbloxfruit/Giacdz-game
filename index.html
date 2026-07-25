@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Giac's House 3D - Khắc Phục Hoàn Toàn</title>
+    <title>Giac's House 3D - Custom Key 3D</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,9 +21,9 @@
     <div id="controls-screen" class="screen hidden">
         <h2>🎮 BẢNG ĐIỀU KHIỂN</h2>
         <div class="instruction-box">
-            <p><b>PC:</b> Phím WASD để đi, Chuột để xoay, Phím E để lấy đồ, Phím F để bật/tắt đèn, Phím 1-2-3 để chọn túi đồ.</p>
-            <p><b>Mobile:</b> Dùng Joystick trái để đi, vuốt nửa màn hình phải để xoay. Dùng nút [✋ LẤY] và [🔦 ĐÈN] để tương tác.</p>
-            <p><b>Luật chơi:</b> Túi có 3 ô. Nếu đầy, nhặt đồ mới sẽ vứt đồ cũ xuống đất. Tìm Mật Mã và Kiềm để thoát!</p>
+            <p><b>PC:</b> WASD di chuyển, Chuột xoay nhìn, [E] lấy đồ, [F] bật/tắt đèn pin, [1-2-3] chọn ô đồ.</p>
+            <p><b>Mobile:</b> Dùng Joystick trái để đi, nửa màn hình phải để xoay. Dùng nút [✋ LẤY] và [🔦 ĐÈN].</p>
+            <p><b>Mục tiêu:</b> Nhặt chìa khóa 3D đúng màu để mở các cánh cửa tương ứng, tìm Kiềm và Mật Mã để thoát!</p>
         </div>
         <button class="btn-back" id="btn-back-controls">TRỞ VỀ</button>
     </div>
@@ -31,7 +31,7 @@
     <!-- MÀN HÌNH CÀI ĐẶT -->
     <div id="settings-screen" class="screen hidden">
         <h2>⚙️ CÀI ĐẶT</h2>
-        <p>Đồ họa đã được tối ưu hóa tự động cho thiết bị của bạn.</p>
+        <p>Đồ họa và vật phẩm 3D đã được tối ưu hóa.</p>
         <button class="btn-back" id="btn-back-settings">TRỞ VỀ</button>
     </div>
 
@@ -51,7 +51,7 @@
         <div id="touch-look-zone"></div>
         <div id="joystick-base"><div id="joystick-stick"></div></div>
         
-        <!-- Nút Tương tác & Đèn Pin cho Mobile -->
+        <!-- Nút Tương tác & Đèn Pin -->
         <button id="btn-flashlight" class="on">🔦<br>ĐÈN</button>
         <button id="btn-action">✋<br>LẤY</button>
 
@@ -63,7 +63,6 @@
         </div>
     </div>
 
-    <!-- Tải thư viện Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="game.js"></script>
 </body>
