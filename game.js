@@ -1,6 +1,7 @@
 document.addEventListener('touchmove', function(e) { e.preventDefault(); }, { passive: false });
 
-function showMenu(id) {
+// Hàm đổi menu được gọi trực tiếp từ HTML
+window.showMenu = function(id) {
     document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
     document.getElementById(id).classList.remove('hidden');
 }
@@ -21,7 +22,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
 document.body.appendChild(renderer.domElement);
 
-const ambientLight = new THREE.AmbientLight(0x222230, 0.7); scene.add(ambientLight);
+const ambientLight = new THREE.AmbientLight(0x222230, 0.8); scene.add(ambientLight);
 
 const flashLight = new THREE.SpotLight(0xffeedd, 2.0, 25, Math.PI / 4, 0.5, 1);
 flashLight.position.set(0, 0, 0); flashLight.castShadow = true;
@@ -30,7 +31,6 @@ camera.add(flashLight); scene.add(camera);
 const flashTarget = new THREE.Object3D(); flashTarget.position.set(0, 0, -1);
 camera.add(flashTarget); flashLight.target = flashTarget;
 
-// Hàm tạo vân gạch/gỗ thủ công cực nhẹ
 function createTexture(color, type='brick') {
     const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 256;
     const ctx = canvas.getContext('2d');
@@ -83,16 +83,15 @@ scene.add(new THREE.Mesh(new THREE.PlaneGeometry(75, 75), ceilMat).setRotationFr
 // 2. THIẾT KẾ CỬA TỰ XOAY & TỦ GỖ CHÂN THỰC
 // ==========================================
 function getDoorRotation(x, z) {
-    if(mapGrid[z] && mapGrid[z][x-1]===1 && mapGrid[z][x+1]===1) return 0; // Cửa kẹp giữa tường ngang
-    if(mapGrid[z-1] && mapGrid[z-1][x]===1 && mapGrid[z+1] && mapGrid[z+1][x]===1) return Math.PI/2; // Cửa kẹp giữa tường dọc
-    return 0; // Mặc định
+    if(mapGrid[z] && mapGrid[z][x-1]===1 && mapGrid[z][x+1]===1) return 0; 
+    if(mapGrid[z-1] && mapGrid[z-1][x]===1 && mapGrid[z+1] && mapGrid[z+1][x]===1) return Math.PI/2; 
+    return 0; 
 }
 
 function createDoor(hexColor, code, gX, gZ) {
     const group = new THREE.Group();
     group.userData = { type: 'door', reqCode: code, gridX: gX, gridZ: gZ, hex: hexColor };
     
-    // Khung viền làm to hơn 1 chút để che kín khe hở
     const frame = new THREE.Mesh(new THREE.BoxGeometry(UNIT*1.05, UNIT, UNIT*0.5), new THREE.MeshLambertMaterial({ color: 0x111111 }));
     frame.position.y = UNIT/2; 
     const body = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.85, UNIT*0.9, UNIT*0.55), woodMat);
@@ -107,7 +106,7 @@ function createDoor(hexColor, code, gX, gZ) {
 
     group.add(frame, body, p1, p2, knob);
     group.position.set(gX * UNIT, 0, gZ * UNIT);
-    group.rotation.y = getDoorRotation(gX, gZ); // Fix lỗi quay cửa
+    group.rotation.y = getDoorRotation(gX, gZ); 
     scene.add(group); interactables.push(group);
 }
 
@@ -129,11 +128,10 @@ function createWardrobe(gX, gZ) {
     const group = new THREE.Group();
     group.userData = { type: 'wardrobe', pos: new THREE.Vector3(gX*UNIT, 2, gZ*UNIT) };
     
-    // Tủ được tạo hình có cánh và tay nắm, vân gỗ
     const body = new THREE.Mesh(new THREE.BoxGeometry(UNIT*0.9, UNIT*1.2, UNIT*0.8), woodMat);
     body.position.y = UNIT*0.6;
     const lineMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
-    const line = new THREE.Mesh(new THREE.BoxGeometry(0.05, UNIT*1.1, UNIT*0.85), lineMat); line.position.y = UNIT*0.6; // Khe giữa 2 cánh
+    const line = new THREE.Mesh(new THREE.BoxGeometry(0.05, UNIT*1.1, UNIT*0.85), lineMat); line.position.y = UNIT*0.6; 
     
     const hMat = new THREE.MeshLambertMaterial({ color: 0x888888 });
     const h1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.5, 0.1), hMat); h1.position.set(-0.2, UNIT*0.6, UNIT*0.4);
@@ -141,7 +139,6 @@ function createWardrobe(gX, gZ) {
     
     group.add(body, line, h1, h2);
     group.position.set(gX*UNIT, 0, gZ*UNIT);
-    // Xoay tủ dựa theo tường
     if(mapGrid[gZ-1] && mapGrid[gZ-1][gX]===1) group.rotation.y = 0; 
     else if(mapGrid[gZ] && mapGrid[gZ][gX-1]===1) group.rotation.y = Math.PI/2;
     scene.add(group); interactables.push(group);
@@ -194,12 +191,11 @@ spawnItem(3, 11, 'key', 'blueKey', 0x0088ff);
 spawnItem(1, 3, 'key', 'greenKey', 0x00ff44);   
 spawnItem(13, 11, 'key', 'yellowKey', 0xffbb00); 
 spawnItem(13, 4, 'pliers', 'pliers');
-spawnItem(12, 13, 'code', 'code'); // Code chỉ đọc, không nhặt vào túi
+spawnItem(12, 13, 'code', 'code'); 
 const PASSWORD = "583"; let hasCode = false;
 
-// KHO ĐỒ LOGIC
-let inventory = [null, null, null]; // Chứa max 3 items
-let activeSlot = 0; // Đang chọn ô số 0
+let inventory = [null, null, null]; 
+let activeSlot = 0; 
 
 window.selectSlot = function(index) {
     activeSlot = index;
@@ -227,8 +223,6 @@ const mEye2 = new THREE.Mesh(new THREE.SphereGeometry(0.15), eyeMat); mEye2.posi
 const mTors = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.4, 2.5), skinMat); mTors.position.y = 1.8;
 const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 1.8), skinMat); legL.position.set(-0.3, 0.9, 0);
 const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 1.8), skinMat); legR.position.set(0.3, 0.9, 0);
-
-// Thêm tay dài ngoằng
 const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 2.2), skinMat); armL.position.set(-0.8, 2.5, 0);
 const armR = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 2.2), skinMat); armR.position.set(0.8, 2.5, 0);
 
@@ -236,7 +230,7 @@ monster.add(mBody, mEye1, mEye2, mTors, legL, legR, armL, armR); scene.add(monst
 let monDirX = 1, monDirZ = 0, monsterState = 'patrol'; 
 
 // ==========================================
-// 5. ĐIỀU KHIỂN & RAYCAST (CHỐNG XUYÊN TƯỜNG)
+// 5. ĐIỀU KHIỂN & RAYCAST
 // ==========================================
 let isHiding = false, isPlaying = false, lastPlayerPos = new THREE.Vector3();
 let joyX = 0, joyY = 0; let keysPressed = { w: false, a: false, s: false, d: false };
@@ -286,7 +280,9 @@ document.addEventListener('mousemove', (e) => {
 });
 
 const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-if (isMobile) { document.getElementById('joystick-base').style.display = 'block'; }
+if (isMobile) { 
+    document.getElementById('joystick-base').style.display = 'block'; 
+}
 
 let lookTouchId = null, joyTouchId = null, tStartX = 0, tStartY = 0;
 const lookZone = document.getElementById('touch-look-zone'), joyBase = document.getElementById('joystick-base'), joyStick = document.getElementById('joystick-stick');
@@ -308,7 +304,6 @@ function tryInteract() {
     if (isHiding) { isHiding = false; camera.position.copy(lastPlayerPos); resetInputs(); return; }
     resetInputs();
 
-    // Thu thập tất cả lưới (mesh) để bắn raycast chặn tường
     let checkList = [...walls];
     interactables.forEach(g => g.traverse(child => { if(child.isMesh) { child.parentGroup = g; checkList.push(child); } }));
 
@@ -317,10 +312,7 @@ function tryInteract() {
 
     if (intersects.length > 0 && intersects[0].distance < 6) {
         let hit = intersects[0].object;
-        if (!hit.parentGroup) {
-            // Chạm vào tường
-            showToast("Bị vướng tường!", "#aaa"); return;
-        }
+        if (!hit.parentGroup) { showToast("Bị vướng tường!", "#aaa"); return; }
         
         let obj = hit.parentGroup;
         let data = obj.userData;
@@ -329,13 +321,10 @@ function tryInteract() {
             if (data.name === 'code') {
                 hasCode = true; showToast(`Đã đọc mật mã: ${PASSWORD}`, "#ffff00"); return;
             }
-            
-            // Xử lý đổi đồ / vứt đồ cũ xuống đất
             if (inventory[activeSlot] !== null) {
                 let oldItemData = inventory[activeSlot];
                 spawnItem(camera.position.x/UNIT, camera.position.z/UNIT, oldItemData.itemType, oldItemData.name, oldItemData.color);
             }
-            
             inventory[activeSlot] = { name: data.name, itemType: data.itemType, reqCode: data.reqCode, icon: obj.icon, color: obj.children[0].material.color.getHex() };
             scene.remove(obj); interactables = interactables.filter(o => o !== obj);
             showToast(`Nhặt được vào ô ${activeSlot+1}!`, "#00ff00"); updateUI();
@@ -345,11 +334,9 @@ function tryInteract() {
             let currentItem = inventory[activeSlot];
             if (currentItem && currentItem.reqCode === req) {
                 scene.remove(obj); mapGrid[data.gridZ][data.gridX] = 0; interactables = interactables.filter(o => o !== obj);
-                inventory[activeSlot] = null; // Mất chìa
+                inventory[activeSlot] = null; 
                 showToast("Đã mở khóa cửa!", "#00ff00"); updateUI();
-            } else {
-                showToast("Cửa khóa! Cầm đúng chìa vào ô đang chọn.", "#ff3333"); 
-            }
+            } else { showToast("Cửa khóa! Cầm đúng chìa vào ô đang chọn.", "#ff3333"); }
         } 
         else if (data.type === 'wardrobe') {
             isHiding = true; lastPlayerPos.copy(camera.position); camera.position.copy(data.pos);
@@ -359,11 +346,9 @@ function tryInteract() {
             if (data.hasChains) {
                 if (currentItem && currentItem.name === 'pliers') {
                     obj.chains.forEach(c => scene.remove(c)); data.hasChains = false;
-                    inventory[activeSlot] = null; updateUI(); // Dùng xong kiềm
+                    inventory[activeSlot] = null; updateUI();
                     showToast("Cắt xích xong! Hãy nhập mật mã.", "#00ff00");
-                } else {
-                    showToast("Cửa xích! Cầm KIỀM trên tay để cắt.", "#ff3333");
-                }
+                } else { showToast("Cửa xích! Cầm KIỀM trên tay để cắt.", "#ff3333"); }
                 return;
             }
             if (!hasCode) { showToast("Cần tìm MẬT MÃ để mở cửa!", "#ff3333"); return; }
@@ -406,7 +391,6 @@ function animate() {
 
     interactables.forEach(i => { if (i.userData.type === 'item') { i.rotation.y += delta; i.position.y = 0.5 + Math.sin(time*4)*0.1; } });
 
-    // AI Quái vật (Thêm hiệu ứng rùng rợn)
     const distToPlayer = monster.position.distanceTo(camera.position);
     if (distToPlayer < 12 && !isHiding) monsterState = 'chase'; else monsterState = 'patrol';
     let monSpeed = (monsterState === 'chase' ? 4.0 : 1.8) * delta;
@@ -417,9 +401,8 @@ function animate() {
         if(!checkCollision(monster.position.x+mD.x*monSpeed, monster.position.z)) monster.position.x+=mD.x*monSpeed;
         if(!checkCollision(monster.position.x, monster.position.z+mD.z*monSpeed)) monster.position.z+=mD.z*monSpeed;
         
-        // Hiệu ứng giật gân, vung tay khi rượt
-        mBody.position.y = 3.5 + Math.sin(time * 30) * 0.15; // Giật giật
-        mTors.rotation.x = 0.3; // Chồm tới trước
+        mBody.position.y = 3.5 + Math.sin(time * 30) * 0.15; 
+        mTors.rotation.x = 0.3; 
         armL.rotation.x = Math.sin(time * 15);
         armR.rotation.x = -Math.sin(time * 15);
         
@@ -438,7 +421,6 @@ function animate() {
     let speedMult = monsterState === 'chase' ? 18 : 8;
     legL.position.z = Math.sin(time*speedMult)*0.3; legR.position.z = -Math.sin(time*speedMult)*0.3;
 
-    // Hiển thị nút bấm qua Raycast
     let showP = false;
     if(!isHiding) {
         let checkList = [...walls];
@@ -451,7 +433,8 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-function startGame() {
+// Được gọi từ file index.html qua onclick
+window.startGame = function() {
     document.getElementById('start-screen').classList.add('hidden'); 
     document.getElementById('ui').classList.remove('hidden');
     inventory = [null, null, null]; activeSlot = 0; hasCode = false; selectSlot(0); updateUI();
