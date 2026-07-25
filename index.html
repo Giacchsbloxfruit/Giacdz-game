@@ -2,61 +2,65 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Giac's House 3D</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Giac's House 3D - Khắc Phục Hoàn Toàn</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- MENU CHÍNH -->
     <div id="start-screen" class="screen">
-        <h1 class="game-title">Giac's House</h1>
+        <h1 class="game-title">GIAC'S HOUSE</h1>
         <div class="menu-container">
-            <button onclick="startGame()">PLAY</button>
-            <button onclick="showMenu('controls-screen')">CONTROL</button>
-            <button onclick="showMenu('settings-screen')">SETTING</button>
+            <button id="btn-play">▶ BẮT ĐẦU CHƠI</button>
+            <button id="btn-controls">ĐIỀU KHIỂN</button>
+            <button id="btn-settings">CÀI ĐẶT</button>
         </div>
     </div>
 
+    <!-- MÀN HÌNH HƯỚNG DẪN -->
     <div id="controls-screen" class="screen hidden">
-        <h2>BẢNG ĐIỀU KHIỂN</h2>
-        <p style="text-align: left; max-width: 400px; line-height: 1.8;">
-            <b>PC:</b> Phím 1, 2, 3 để đổi ô đồ.<br>
-            <b>Mobile:</b> Chạm vào từng ô đồ dưới đáy để đổi.<br>
-            <b>Túi đồ (Max 3):</b> Khi túi đầy, nhặt đồ mới sẽ vứt đồ đang cầm ở ô hiện tại xuống đất.
-        </p>
-        <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
+        <h2>🎮 BẢNG ĐIỀU KHIỂN</h2>
+        <div class="instruction-box">
+            <p><b>PC:</b> Phím WASD để đi, Chuột để xoay, Phím E để lấy đồ, Phím 1-2-3 để chọn ô túi đồ.</p>
+            <p><b>Mobile:</b> Dùng Joystick bên trái để đi, vuốt nửa màn hình phải để xoay. Bấm nút [✋ LẤY] để tương tác.</p>
+            <p><b>Luật chơi:</b> Túi có 3 ô. Nếu đầy, nhặt đồ mới sẽ vứt đồ cũ xuống đất. Tìm Mật Mã và Kiềm để thoát!</p>
+        </div>
+        <button class="btn-back" id="btn-back-controls">TRỞ VỀ</button>
     </div>
 
+    <!-- MÀN HÌNH CÀI ĐẶT -->
     <div id="settings-screen" class="screen hidden">
-        <h2>CÀI ĐẶT</h2>
-        <p>Updating soon...</p>
-        <button class="btn-back" onclick="showMenu('start-screen')">BACK</button>
+        <h2>⚙️ CÀI ĐẶT</h2>
+        <p>Đồ họa đã được tối ưu hóa tự động cho thiết bị của bạn.</p>
+        <button class="btn-back" id="btn-back-settings">TRỞ VỀ</button>
     </div>
 
+    <!-- MÀN HÌNH THẤT BẠI / CHIẾN THẮNG -->
     <div id="game-over" class="screen hidden">
         <h1 id="end-title">THẤT BẠI</h1>
-        <button onclick="location.reload()">CHƠI LẠI</button>
+        <button id="btn-restart">🔄 CHƠI LẠI</button>
     </div>
 
-    <!-- GIAO DIỆN TRONG GAME -->
+    <!-- GIAO DIỆN TRONG GAME (HUD) -->
     <div id="ui" class="hidden">
-        <div id="info" class="hidden"></div>
         <div id="crosshair"></div>
-        <div id="toast-msg" class="hidden"></div>
+        <div id="toast-msg" class="hidden">Thông báo</div>
         <div id="prompt">Bấm [E] hoặc [✋ LẤY]</div>
         
+        <!-- Vùng điều khiển Mobile -->
         <div id="touch-look-zone"></div>
         <div id="joystick-base"><div id="joystick-stick"></div></div>
-        <button id="btn-action">✋ LẤY</button>
+        <button id="btn-action">✋<br>LẤY</button>
 
         <!-- KHO ĐỒ 3 Ô -->
         <div id="inventory-bar">
-            <div class="inv-slot active" id="slot-0" onclick="selectSlot(0)"></div>
-            <div class="inv-slot" id="slot-1" onclick="selectSlot(1)"></div>
-            <div class="inv-slot" id="slot-2" onclick="selectSlot(2)"></div>
+            <div class="inv-slot active" id="slot-0" data-index="0"></div>
+            <div class="inv-slot" id="slot-1" data-index="1"></div>
+            <div class="inv-slot" id="slot-2" data-index="2"></div>
         </div>
     </div>
 
+    <!-- Tải thư viện Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="game.js"></script>
 </body>
