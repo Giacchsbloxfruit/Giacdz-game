@@ -1,8 +1,5 @@
 window.onload = function() {
 
-    // ==========================================
-    // 1. QUẢN LÝ GIAO DIỆN (UI & MENU)
-    // ==========================================
     const screens = document.querySelectorAll('.screen');
     function showMenu(id) {
         screens.forEach(el => el.classList.add('hidden'));
@@ -21,7 +18,7 @@ window.onload = function() {
         document.getElementById('joystick-base').style.display = 'block';
         document.getElementById('touch-look-zone').style.display = 'block';
         document.getElementById('btn-action').style.display = 'flex';
-        document.getElementById('btn-flashlight').style.display = 'flex'; // Hiện nút đèn pin
+        document.getElementById('btn-flashlight').style.display = 'flex';
     }
 
     let toastTimeout;
@@ -32,9 +29,6 @@ window.onload = function() {
         toastTimeout = setTimeout(() => toast.classList.add('hidden'), 3000);
     }
 
-    // ==========================================
-    // 2. KHỞI TẠO THREE.JS & ÁNH SÁNG
-    // ==========================================
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050508);
     scene.fog = new THREE.FogExp2(0x050508, 0.04); 
@@ -49,11 +43,9 @@ window.onload = function() {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
     document.body.appendChild(renderer.domElement);
 
-    // FIX: Làm ánh sáng môi trường sáng hơn một chút để thấy mờ mờ khi tắt đèn
     const ambientLight = new THREE.AmbientLight(0x2a2a35, 1.5); 
     scene.add(ambientLight);
 
-    // FIX: Đèn pin sáng hơn, chiếu rộng và xa hơn (khoảng lớn nhưng không hết map)
     const flashLight = new THREE.SpotLight(0xfff5e6, 3.0, 45, Math.PI / 2.8, 0.5, 1);
     flashLight.position.set(0, 0, 0); 
     flashLight.castShadow = true;
@@ -66,31 +58,18 @@ window.onload = function() {
     camera.add(flashTarget); 
     flashLight.target = flashTarget;
 
-    // ==========================================
-    // CƠ CHẾ BẬT/TẮT ĐÈN PIN
-    // ==========================================
     let isFlashlightOn = true;
     function toggleFlashlight() {
         if (!isPlaying) return;
         isFlashlightOn = !isFlashlightOn;
         flashLight.visible = isFlashlightOn;
-        
         const btn = document.getElementById('btn-flashlight');
-        if(isFlashlightOn) {
-            btn.classList.add('on');
-            showToast("BẬT Đèn pin", "#ffff00");
-        } else {
-            btn.classList.remove('on');
-            showToast("TẮT Đèn pin", "#aaaaaa");
-        }
+        if(isFlashlightOn) { btn.classList.add('on'); showToast("BẬT Đèn pin", "#ffff00"); }
+        else { btn.classList.remove('on'); showToast("TẮT Đèn pin", "#aaaaaa"); }
     }
-    // Gán sự kiện cho Mobile
     document.getElementById('btn-flashlight').addEventListener('touchstart', (e)=>{ e.preventDefault(); toggleFlashlight(); }, {passive:false});
     document.getElementById('btn-flashlight').addEventListener('click', toggleFlashlight);
 
-    // ==========================================
-    // 3. VẬT LIỆU VÀ BẢN ĐỒ (MAP)
-    // ==========================================
     function createTexture(baseColor, type='brick') {
         const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 256;
         const ctx = canvas.getContext('2d');
@@ -111,7 +90,7 @@ window.onload = function() {
         const tex = new THREE.CanvasTexture(canvas); tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping; return tex;
     }
 
-    const wallMat = new THREE.MeshLambertMaterial({ map: createTexture('#252525', 'brick') }); // Gạch sáng hơn tí
+    const wallMat = new THREE.MeshLambertMaterial({ map: createTexture('#252525', 'brick') });
     const floorMat = new THREE.MeshLambertMaterial({ map: createTexture('#111111', 'brick') }); 
     floorMat.map.repeat.set(20, 20);
     const ceilMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
@@ -149,9 +128,6 @@ window.onload = function() {
         return 0; 
     }
 
-    // ==========================================
-    // 4. XÂY DỰNG MÔI TRƯỜNG & TƯƠNG TÁC
-    // ==========================================
     for (let z = 0; z < mapGrid.length; z++) {
         for (let x = 0; x < mapGrid[z].length; x++) {
             let pX = x * UNIT, pZ = z * UNIT;
@@ -206,15 +182,38 @@ window.onload = function() {
         }
     }
 
+    // TẢI ẢNH KEY.PNG ĐỂ BIẾN THÀNH 3D VÀ ĐỔI MÀU
+    const textureLoader = new THREE.TextureLoader();
+
     function spawnItem(gX, gZ, type, name, color=0xffffff) {
         const group = new THREE.Group();
         group.userData = { type: 'item', itemType: type, name: name, reqCode: (name==='blueKey'?3:(name==='greenKey'?4:(name==='yellowKey'?5:0))), isItem: true };
         
         if (type === 'key') {
-            const mat = new THREE.MeshBasicMaterial({ color: color });
-            const s = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.8), mat); s.rotation.z = Math.PI/2; s.castShadow = true;
-            const h = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.08, 8, 16), mat); h.position.x = -0.4; h.castShadow = true;
-            group.add(s, h); group.icon = (color===0x0088ff?'🔵':(color===0x00ff44?'🟢':'🟡')); group.savedColor = color;
+            group.icon = (color===0x0088ff?'🔵':(color===0x00ff44?'🟢':'🟡'));
+            group.savedColor = color;
+
+            const keyGeo = new THREE.PlaneGeometry(1.5, 1.5);
+            
+            // Load key.png và tự động đổi màu theo chỉ định (Xanh dương, Xanh lá, Vàng)
+            textureLoader.load('key.png', (texture) => {
+                const keyMat = new THREE.MeshLambertMaterial({ 
+                    map: texture, 
+                    transparent: true, 
+                    alphaTest: 0.2, 
+                    side: THREE.DoubleSide,
+                    color: color // Tự động đổi màu chìa khóa 3D
+                });
+                const keyMesh = new THREE.Mesh(keyGeo, keyMat);
+                keyMesh.castShadow = true;
+                group.add(keyMesh);
+            }, undefined, () => {
+                // Fallback nếu chưa có file key.png
+                const fallbackMat = new THREE.MeshBasicMaterial({ color: color });
+                const fallbackMesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.6, 0.6), fallbackMat);
+                group.add(fallbackMesh);
+            });
+
         } else if (type === 'pliers') {
             const rMat = new THREE.MeshBasicMaterial({color: 0xcc2222});
             const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.7), rMat); p1.position.set(-0.08, 0, 0); p1.rotation.z = 0.2; p1.castShadow = true;
@@ -238,9 +237,6 @@ window.onload = function() {
     spawnItem(12, 13, 'code', 'code'); 
     const PASSWORD = "583"; let hasCode = false;
 
-    // ==========================================
-    // 5. HỆ THỐNG INVENTORY 
-    // ==========================================
     let inventory = [null, null, null]; let activeSlot = 0; 
     function selectSlot(index) {
         activeSlot = index;
@@ -258,9 +254,6 @@ window.onload = function() {
         }
     }
 
-    // ==========================================
-    // 6. QUÁI VẬT
-    // ==========================================
     const monster = new THREE.Group();
     const skinMat = new THREE.MeshLambertMaterial({ color: 0x150303 });
     const eyeMat = new THREE.MeshBasicMaterial({ color: 0xff0000 }); 
@@ -276,9 +269,6 @@ window.onload = function() {
     scene.add(monster);
     let monDirX = 1, monDirZ = 0, monsterState = 'patrol'; 
 
-    // ==========================================
-    // 7. INPUT & ĐIỀU KHIỂN
-    // ==========================================
     let isHiding = false, isPlaying = false, lastPlayerPos = new THREE.Vector3();
     let joyX = 0, joyY = 0; let keysPressed = { w: false, a: false, s: false, d: false };
     
@@ -295,7 +285,7 @@ window.onload = function() {
         if (e.code === 'KeyA' || e.code === 'ArrowLeft') keysPressed.a = true;
         if (e.code === 'KeyD' || e.code === 'ArrowRight') keysPressed.d = true;
         if (e.code === 'KeyE') tryInteract();
-        if (e.code === 'KeyF') toggleFlashlight(); // Bật tắt đèn PC
+        if (e.code === 'KeyF') toggleFlashlight();
         if (e.code === 'Digit1') selectSlot(0);
         if (e.code === 'Digit2') selectSlot(1);
         if (e.code === 'Digit3') selectSlot(2);
@@ -333,9 +323,6 @@ window.onload = function() {
     const clearJoyTouch = (e) => { for(let i=0; i<e.changedTouches.length; i++){ if(e.changedTouches[i].identifier === joyTouchId){ joyTouchId = null; joyStick.style.transform = `translate(-50%, -50%)`; joyX = 0; joyY = 0; } } };
     joyBase.addEventListener('touchend', clearJoyTouch); joyBase.addEventListener('touchcancel', clearJoyTouch);
 
-    // ==========================================
-    // 8. TƯƠNG TÁC
-    // ==========================================
     const raycaster = new THREE.Raycaster();
 
     function tryInteract() {
@@ -390,9 +377,6 @@ window.onload = function() {
     document.getElementById('btn-action').addEventListener('touchstart', (e)=>{ e.preventDefault(); tryInteract(); }, {passive:false});
     document.getElementById('btn-action').addEventListener('click', tryInteract);
 
-    // ==========================================
-    // 9. VÒNG LẶP GAME & AI
-    // ==========================================
     function checkCollision(x, z) {
         let gX = Math.round(x / UNIT), gZ = Math.round(z / UNIT);
         if (gX<0 || gX>=mapGrid[0].length || gZ<0 || gZ>=mapGrid.length) return true;
@@ -427,9 +411,11 @@ window.onload = function() {
             }
         }
 
+        // Hiệu ứng vật phẩm 3D xoay tròn và bay lơ lửng
         raycastTargets.forEach(hitBox => {
             if (hitBox.parentObj && hitBox.parentObj.userData.type === 'item') {
-                hitBox.parentObj.rotation.y += delta; hitBox.parentObj.position.y = 0.5 + Math.sin(time*4)*0.1;
+                hitBox.parentObj.rotation.y += delta * 1.5; 
+                hitBox.parentObj.position.y = 0.5 + Math.sin(time*4)*0.1;
             }
         });
 
@@ -445,7 +431,6 @@ window.onload = function() {
             
             mBody.position.y = 3.5 + Math.sin(time * 30) * 0.15; mTors.rotation.x = 0.3; armL.rotation.x = Math.sin(time * 15); armR.rotation.x = -Math.sin(time * 15);
             mEye1.material.color.setHex(0xff0000); mEye2.material.color.setHex(0xff0000); 
-            
             if (distToPlayer < 1.4) endGame("QUÁI VẬT ĐÃ TÓM ĐƯỢC BẠN!", "#ff0000");
         } else {
             let nX = monster.position.x + monDirX*monSpeed, nZ = monster.position.z + monDirZ*monSpeed;
@@ -472,14 +457,10 @@ window.onload = function() {
         renderer.render(scene, camera);
     }
 
-    // ==========================================
-    // 10. ĐIỀU HƯỚNG
-    // ==========================================
     function startGame() {
         showMenu(null); document.getElementById('ui').classList.remove('hidden');
         inventory = [null, null, null]; activeSlot = 0; hasCode = false; selectSlot(0); updateUI(); resetInputs();
         
-        // Reset Đèn Pin về mặc định Bật
         isFlashlightOn = true;
         flashLight.visible = true;
         document.getElementById('btn-flashlight').classList.add('on');
