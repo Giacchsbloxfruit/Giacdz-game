@@ -45,3 +45,24 @@ button:active { transform: scale(0.95); background: #aa0000; box-shadow: 0 0 10p
 #btn-flashlight { position: absolute; bottom: 130px; right: 125px; width: 60px; height: 60px; background: rgba(30, 30, 30, 0.8); border: 2px solid #777; border-radius: 50%; color: #aaa; font-weight: bold; font-size: 12px; pointer-events: auto; display: none; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.8); line-height: 1.2; transition: 0.2s; }
 #btn-flashlight.on { background: rgba(180, 180, 30, 0.9); border-color: #ffff00; color: #fff; box-shadow: 0 0 15px rgba(255,255,0,0.5); }
 #btn-flashlight:active { transform: scale(0.9); }
+
+
+/* Enhanced horror presentation */
+body { background: #030304; }
+canvas { display:block; position:fixed; inset:0; width:100%; height:100%; outline:none; }
+.screen { background: radial-gradient(ellipse at 50% 35%, rgba(42,8,12,.94), rgba(2,2,4,.99) 68%); backdrop-filter: blur(2px); }
+.game-title { font-size: clamp(38px, 7vw, 68px); letter-spacing: .12em; text-align:center; animation: titlePulse 3.2s ease-in-out infinite; }
+@keyframes titlePulse { 0%,100% { text-shadow:0 0 12px #850000,0 0 35px #390000; } 50% { text-shadow:0 0 24px #ff1515,0 0 58px #7d0000; } }
+button { letter-spacing:.05em; }
+button:hover { filter:brightness(1.2); box-shadow:0 0 22px rgba(220,0,0,.28); }
+#horror-fx { position:fixed; inset:0; z-index:8; pointer-events:none; overflow:hidden; }
+.fx-vignette { position:absolute; inset:0; background:radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,.42) 78%, rgba(0,0,0,.88) 120%); }
+.fx-grain { position:absolute; inset:-50%; opacity:.045; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E"); animation: grainMove .22s steps(2) infinite; }
+@keyframes grainMove { 0% {transform:translate(0,0)} 25% {transform:translate(2%,-1%)} 50% {transform:translate(-1%,2%)} 75% {transform:translate(1%,1%)} 100% {transform:translate(-2%,-1%)} }
+.fx-danger { position:absolute; inset:0; opacity:0; background:radial-gradient(ellipse at center, transparent 25%, rgba(130,0,0,.08) 52%, rgba(170,0,0,.55) 115%); transition:opacity .12s; }
+.fx-flash { position:absolute; inset:0; background:#fff; opacity:0; }
+#horror-fx.scare .fx-flash { animation: scareFlash .38s ease-out; }
+#horror-fx.scare .fx-vignette { background:radial-gradient(ellipse at center, rgba(110,0,0,.3), rgba(0,0,0,.98)); }
+@keyframes scareFlash { 0% {opacity:.88;background:#eee} 12% {opacity:.12;background:#7b0000} 25% {opacity:.65;background:#080000} 45% {opacity:.08} 100% {opacity:0} }
+#toast-msg { backdrop-filter:blur(8px); }
+@media (max-width:600px) { .game-title { margin-bottom:28px; } .inv-slot { width:54px;height:54px;font-size:27px; } .instruction-box { font-size:14px; padding:15px; } }
